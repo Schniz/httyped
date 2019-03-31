@@ -4,6 +4,7 @@ import { parseBody } from "./parseBody";
 import { RouteDefiner } from "../RouteDefiner";
 import { make as makeRequest, Request } from "./Request";
 import { Response } from "./Response";
+import { Server } from "http";
 
 type Route<
   RequestType extends t.Any,
@@ -25,6 +26,10 @@ type RouteCallback<
 export class TypedExpress {
   app: E.Express;
   routes: Route<any, any, any>[] = [];
+
+  static of(app: E.Express) {
+    return new TypedExpress(app);
+  }
 
   constructor(app: E.Express) {
     this.app = app;
@@ -54,6 +59,10 @@ export class TypedExpress {
         }
       }
     );
+  }
+
+  listen(...args: Parameters<E.Application["listen"]>) {
+    return this.app.listen(...args);
   }
 
   get<

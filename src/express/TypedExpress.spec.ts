@@ -35,9 +35,9 @@ test("Parameters work", async () => {
   const application = express();
   const app = new TypedExpress(application);
 
-  const Battle = t.type({ name1: t.string, name2: t.string });
+  const Game = t.type({ name1: t.string, name2: t.string });
   app.get(
-    RouteDefiner.returns(Battle)
+    RouteDefiner.returns(Game)
       .param("name1")
       .fixed("vs")
       .param("name2"),
@@ -48,7 +48,7 @@ test("Parameters work", async () => {
 
   const result = await fetch(`${host}/gal/vs/the world`).then(x => x.json());
 
-  expect(Battle.decode(result.data).isRight()).toBe(true);
+  expect(Game.decode(result.data).isRight()).toBe(true);
   expect(result.data).toEqual({ name1: "gal", name2: "the world" });
 });
 
