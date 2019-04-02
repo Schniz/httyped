@@ -8,12 +8,6 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/node:10
-      - image: postgres:10
-        environment:
-          POSTGRES_PASSWORD: password
-      - image: mysql:5.7
-        environment:
-          MYSQL_ROOT_PASSWORD: password
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -39,7 +33,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: npm run build
+      # - run: npm run build
 
       # run tests!
       - run:
@@ -47,6 +41,6 @@ jobs:
           command: npm test -- --ci --reporters=default --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT: ./test-results/jest/results.xml
-      
+
       - store_test_results:
           path: ./test-results
