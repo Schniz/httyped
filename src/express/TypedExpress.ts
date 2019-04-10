@@ -4,7 +4,6 @@ import { parseBody } from "./parseBody";
 import { RouteDefiner } from "../RouteDefiner";
 import { make as makeRequest, Request } from "./Request";
 import { Response } from "./Response";
-import { Server } from "http";
 
 type Route<
   RequestType extends t.Any,
