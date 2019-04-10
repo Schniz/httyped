@@ -5,14 +5,14 @@ import { make as makeRequest } from "./Request";
 import { RouteCallback, ServerRoute } from "./Route";
 
 export class TypedExpress {
-  app: E.Express;
+  app: E.Router;
   routes: ServerRoute<any, any, any, any>[] = [];
 
-  static of(app: E.Express) {
+  static of(app: E.Router) {
     return new TypedExpress(app);
   }
 
-  constructor(app: E.Express) {
+  constructor(app: E.Router) {
     this.app = app;
   }
 
@@ -38,13 +38,9 @@ export class TypedExpress {
     );
   }
 
-  listen(...args: Parameters<E.Application["listen"]>) {
-    return this.app.listen(...args);
-  }
-
   and<Params extends string, RouteResult extends t.Any>(
     routeDefiner: RouteDefiner<t.Any, RouteResult, Params, any>,
-    callback: RouteCallback<t.Any, t.TypeOf<RouteResult>, Params>
+    callback: RouteCallback<any, t.TypeOf<RouteResult>, Params>
   ) {
     const route = new ServerRoute({
       callback,

@@ -7,11 +7,11 @@ import * as E from "express";
 import { PathReporter } from "io-ts/lib/PathReporter";
 
 export type RouteCallback<
-  RequestBody extends t.Any,
+  RequestBody,
   ResponseBody,
   ParamNames extends string
 > = (
-  params: Request<ParamNames, t.TypeOf<RequestBody>>
+  params: Request<ParamNames, RequestBody>
 ) => Promise<Response<ResponseBody>>;
 
 export class ServerRoute<
@@ -38,7 +38,9 @@ export class ServerRoute<
     }
     const rt = requestType as t.Any;
 
-    return [bodyParser.json(), validate(rt)];
+    const parser = rt.name === "string" ? bodyParser.text() : bodyParser.json();
+
+    return [parser, validate(rt)];
   }
 }
 

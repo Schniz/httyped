@@ -1,5 +1,4 @@
 import * as t from "io-ts";
-import { IfNever } from "./NullableIfNever";
 
 export type RouteParams<ParamNames extends string> = {
   [param in ParamNames]: string
@@ -116,6 +115,7 @@ export class RouteDefiner<
 
   toJSON() {
     return {
+      method: this.method,
       path: this.toRoutingString(),
       takes: this.requestType ? this.requestType.name : null,
       returns: this.responseType.name
@@ -131,9 +131,7 @@ export namespace Meta {
     any,
     any
   >
-    ? U extends t.Any
-      ? t.TypeOf<U>
-      : never
+    ? t.TypeOf<U>
     : never;
   export type ResponseType<T extends AnyRoute> = T extends RouteDefiner<
     any,

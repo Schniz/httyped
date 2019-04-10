@@ -29,9 +29,11 @@ export async function fetch<
     method: rd.method,
     ...(rd.method !== "get" && {
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type":
+          rd.requestType.name === "string" ? "text/plain" : "application/json"
       },
-      body: JSON.stringify(opts.body)
+      body:
+        rd.requestType.name === "string" ? opts.body : JSON.stringify(opts.body)
     })
   });
 
