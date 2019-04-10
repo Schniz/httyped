@@ -1,6 +1,6 @@
 import * as E from "express";
 import * as t from "io-ts";
-import { RouteDefiner } from "../RouteDefiner";
+import { RouteDefiner, Method } from "../RouteDefiner";
 import { make as makeRequest } from "./Request";
 import { RouteCallback, ServerRoute } from "./Route";
 
@@ -16,11 +16,18 @@ export class TypedExpress {
     this.app = app;
   }
 
-  private route<
+  route<
     Params extends string,
     RouteResult extends t.Any,
     RequestType extends t.Any
-  >(route: ServerRoute<RequestType, RouteResult, Params, any>) {
+  >(
+    routeDefiner: RouteDefiner<RequestType, RouteResult, Params, Method>,
+    callback: RouteCallback<any, t.TypeOf<RouteResult>, Params>
+  ) {
+    const route = new ServerRoute({
+      callback,
+      routeDefiner
+    });
     this.routes.push(route);
     const routeString = route.routeDefiner.toRoutingString();
     this.app[route.routeDefiner.method as "get" | "post"](
@@ -36,17 +43,6 @@ export class TypedExpress {
         }
       }
     );
-  }
-
-  and<Params extends string, RouteResult extends t.Any>(
-    routeDefiner: RouteDefiner<t.Any, RouteResult, Params, any>,
-    callback: RouteCallback<any, t.TypeOf<RouteResult>, Params>
-  ) {
-    const route = new ServerRoute({
-      callback,
-      routeDefiner
-    });
-    this.route<Params, RouteResult, t.Any>(route);
   }
 
   listRoutes() {

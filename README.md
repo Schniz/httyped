@@ -16,25 +16,31 @@ A route is defined by `RouteDefiner`.
 
 #### Examples:
 
-* A route that returns a `string` output, with a fixed path of `/hello`:
+- A `GET` route that returns a `string` output, with a fixed path of `/hello`:
+
   ```ts
-  RouteDefiner.returns(t.string).fixed("hello")
+  RouteDefiner.get.returns(t.string).fixed("hello");
   ```
 
-* A route that returns a `string` output, with a dynamic path of `/hello/:name`:
+- A route that returns a `string` output, with a dynamic path of `/hello/:name`:
+
   ```ts
-  RouteDefiner.returns(t.string)
+  RouteDefiner.get
+    .returns(t.string)
     .fixed("hello")
-    .param("name")
+    .param("name");
   ```
 
-* A route that reads a custom type `User` from the request body and returns a custom type `Greeting`:
+- A `POST` route that reads a custom type `User` from the request body and returns a custom type `Greeting`:
+
   ```ts
   const Greeting = t.type({ msg: t.string });
   const User = t.type({ name: t.string });
 
-  RouteDefiner.reads(User).returns(Greeting)
-    .fixed("user-to-greeting")
+  RouteDefiner.post
+    .reads(User)
+    .returns(Greeting)
+    .fixed("user-to-greeting");
   ```
 
 ## Server
@@ -48,15 +54,55 @@ Implementation for servers is by wrapping Express.js
 :white_check_mark: Pretty routing table, documentation ready
 
 ```ts
-import {TypedExpress, success} from 'httyped/express'
-import express from 'express';
+import { TypedExpress, success } from "httyped/express";
+import express from "express";
 
-const app = TypedExpress.of(express());
+const app = express();
+const typed = TypedExpress.of(app);
 
-app.get(RouteDefiner.returns(t.string).fixed("hello").param("name"), async req => {
-  return success(`Hello, ${req.params.name}`);
-})
+typed.route(
+  RouteDefiner.get // a get request
+    .returns(t.string) // that returns a string
+    .fixed("hello") // and its path is
+    .param("name"), // `/hello/:name`
+  async req => {
+    return success(`Hello, ${req.params.name}`);
+  }
+);
 
 app.listen(3000);
-app.listRoutes(); // Will print a table of routes
+typed.listRoutes(); // Will print a table of routes
+```
+
+## Client
+
+A http client based on `node-fetch`:
+
+:white_check_mark: Type-safety between client and server
+
+:white_check_mark: Autocompletion for request parameters and request body
+
+```ts
+import { fetcher } from "httyped/fetch";
+
+const User = t.type({ name: string }, "User");
+
+// given a route
+const route = RouteDefiner.post
+  .reads(User)
+  .returns(t.string)
+  .fixed("hello")
+  .param("greeting");
+
+const fetch = fetcher(route, "http://localhost:3000");
+//                           ^ the base URI
+
+await fetch({
+  params: {
+    greeting: "Hello"
+  },
+  body: {
+    name: "Gal"
+  }
+});
 ```

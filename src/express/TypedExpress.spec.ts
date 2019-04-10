@@ -16,11 +16,11 @@ afterEach(() => {
   }
 });
 
-test.only("Simple application works", async () => {
+test("Simple application works", async () => {
   const application = express();
   const app = new TypedExpress(application);
 
-  app.and(RouteDefiner.get.returns(t.string).fixed("hello"), async () =>
+  app.route(RouteDefiner.get.returns(t.string).fixed("hello"), async () =>
     success("Hello world!")
   );
 
@@ -36,7 +36,7 @@ test("Parameters work", async () => {
   const app = new TypedExpress(application);
 
   const Game = t.type({ name1: t.string, name2: t.string });
-  app.and(
+  app.route(
     RouteDefiner.get
       .returns(Game)
       .param("name1")

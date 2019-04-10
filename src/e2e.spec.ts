@@ -29,7 +29,7 @@ describe("post data", () => {
   });
 
   test("Simple route", async () => {
-    app.and(routes.simple, async req => {
+    app.route(routes.simple, async req => {
       return success(`body: ${req.body}, param: ${req.params.name}`);
     });
     const fetch = fetcher(routes.simple, host);
@@ -38,7 +38,7 @@ describe("post data", () => {
   });
 
   test("Parse JSON route", async () => {
-    app.and(routes.user, async req => {
+    app.route(routes.user, async req => {
       return success(`from body: ${req.body.name}, param: ${req.params.name}`);
     });
     const fetch = fetcher(routes.user, host);
@@ -52,8 +52,8 @@ describe("post data", () => {
     });
   });
 
-  test.only("Parse string route", async () => {
-    app.and(routes.stringBody, async req => {
+  test("Parse string route", async () => {
+    app.route(routes.stringBody, async req => {
       return success(`body: ${req.body}`);
     });
     const fetch = fetcher(routes.stringBody, host);
