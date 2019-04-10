@@ -1,8 +1,9 @@
 import { fetcher } from "./fetch";
-import { RouteDefiner } from "./RouteDefiner";
+import { RouteDefiner, Meta } from "./RouteDefiner";
 import * as t from "io-ts";
 import { Server, createServer } from "http";
 import { AddressInfo } from "net";
+import { ENGINE_METHOD_ALL } from "constants";
 
 let server: Server | null = null;
 
@@ -28,15 +29,19 @@ test("Calls the right place", async () => {
 
   const Result = t.type({ url: t.string });
   const fetch = fetcher(
-    RouteDefiner.returns(Result)
+    RouteDefiner.get
+      .returns(Result)
       .fixed("hello")
       .param("name"),
     host
   );
+  const r2 = RouteDefiner.get.returns(Result).fixed("hello");
+  const fetch2 = fetcher(r2, host);
+
+  await fetch2({ params: {} });
 
   const response = await fetch({
-    params: { name: "Gal" },
-    body: undefined
+    params: { name: "Gal" }
   });
 
   expect(response.success).toBe(true);

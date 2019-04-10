@@ -8,12 +8,14 @@ export type Request<P extends string, RequestType> = {
   body: RequestType;
 };
 
-export function make<I extends t.Any, O extends t.Any, P extends string>(
-  req: E.Request,
-  rd: RouteDefiner<I, O, P>
-): Request<P, I> {
+export function make<
+  I extends t.Any,
+  O extends t.Any,
+  P extends string,
+  M extends string
+>(req: E.Request, rd: RouteDefiner<I, O, P, M>): Request<P, I> {
   return {
     params: new RequestParamFetcher(rd, req).getAll(),
-    body: req.body as t.TypeOf<I>
+    body: rd.method === "get" ? null : (req.body as t.TypeOf<I>)
   };
 }

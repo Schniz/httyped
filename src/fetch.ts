@@ -3,29 +3,51 @@ import { RouteDefiner, Meta } from "./RouteDefiner";
 import nodeFetch from "node-fetch";
 import { Response } from "./express/Response";
 
-type Opts<Params, Body> = { params: Params; body: Body };
+type Opts<M, Params, Body> = ([keyof Params] extends [never]
+  ? { params?: Params }
+  : {
+      params: Params;
+    }) &
+  (M extends "get"
+    ? {}
+    : {
+        body: [Body] extends [never] ? undefined : Body;
+      });
 
-export async function fetch<I extends t.Any, O extends t.Any, P extends string>(
-  rd: RouteDefiner<I, O, P>,
-  opts: Opts<Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>,
+export async function fetch<
+  I extends t.Any,
+  O extends t.Any,
+  P extends string,
+  M extends string
+>(
+  rd: RouteDefiner<I, O, P, M>,
+  opts: Opts<M, Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>,
   rootURL: string
-): Promise<Response<Meta.ResponseType<typeof rd>>> {
-  const path = rd.toString(opts.params);
+): Promise<Meta.ResponseType<typeof rd>> {
+  const path = rd.toString(opts.params || ({} as Meta.Params<typeof rd>));
   const response = await nodeFetch(`${rootURL}${path}`, {
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(opts.body)
+    method: rd.method,
+    ...(rd.method !== "get" && {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(opts.body)
+    })
   });
 
   return response.json();
 }
 
-export function fetcher<I extends t.Any, O extends t.Any, P extends string>(
-  rd: RouteDefiner<I, O, P>,
+export function fetcher<
+  I extends t.Any,
+  O extends t.Any,
+  P extends string,
+  M extends string
+>(
+  rd: RouteDefiner<I, O, P, M>,
   rootURL: string = "/"
 ): (
-  opts: Opts<Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>
+  opts: Opts<M, Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>
 ) => Promise<Response<Meta.ResponseType<typeof rd>>> {
   return opts => fetch(rd, opts, rootURL);
 }

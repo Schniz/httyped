@@ -16,11 +16,11 @@ afterEach(() => {
   }
 });
 
-test("Simple application works", async () => {
+test.only("Simple application works", async () => {
   const application = express();
   const app = new TypedExpress(application);
 
-  app.get(RouteDefiner.returns(t.string).fixed("hello"), async () =>
+  app.and(RouteDefiner.get.returns(t.string).fixed("hello"), async () =>
     success("Hello world!")
   );
 
@@ -28,7 +28,7 @@ test("Simple application works", async () => {
 
   const result = await fetch(`${host}/hello`).then(x => x.json());
 
-  expect(result.data).toEqual("Hello world!");
+  expect(result).toEqual({ success: true, data: "Hello world!" });
 });
 
 test("Parameters work", async () => {
@@ -36,8 +36,9 @@ test("Parameters work", async () => {
   const app = new TypedExpress(application);
 
   const Game = t.type({ name1: t.string, name2: t.string });
-  app.get(
-    RouteDefiner.returns(Game)
+  app.and(
+    RouteDefiner.get
+      .returns(Game)
       .param("name1")
       .fixed("vs")
       .param("name2"),

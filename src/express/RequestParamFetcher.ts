@@ -1,11 +1,11 @@
-import { RouteDefiner } from '../RouteDefiner';
-import { Request } from 'express';
+import { RouteDefiner } from "../RouteDefiner";
+import { Request } from "express";
 
 export class RequestParamFetcher<ParamNames extends string> {
-  routeDefiner: RouteDefiner<any, any, ParamNames>;
+  routeDefiner: RouteDefiner<any, any, ParamNames, any>;
   request: Request;
 
-  constructor(rd: RouteDefiner<any, any, ParamNames>, request: Request) {
+  constructor(rd: RouteDefiner<any, any, ParamNames, any>, request: Request) {
     this.routeDefiner = rd;
     this.request = request;
   }
