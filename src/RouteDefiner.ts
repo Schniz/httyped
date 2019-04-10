@@ -104,7 +104,7 @@ export class RouteDefiner<
 
 export namespace Meta {
   export type AnyRoute = RouteDefiner<any, any, any>;
-  export type RequestBodyType<T extends AnyRoute> = t.TypeOf<T["requestType"]>;
-  export type ResponseType<T extends AnyRoute> = t.TypeOf<T["responseType"]>;
-  export type Params<T extends AnyRoute> = Parameters<T["toString"]>[0];
+  export type RequestBodyType<T extends AnyRoute> = T extends RouteDefiner<infer U, any, any> ? t.TypeOf<U> : never;
+  export type ResponseType<T extends AnyRoute> = T extends RouteDefiner<any, infer U, any> ? t.TypeOf<U> : never;
+  export type Params<T extends AnyRoute> = T extends RouteDefiner<any, any, infer U> ? RouteParams<U> : never;
 }
