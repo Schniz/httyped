@@ -1,11 +1,13 @@
 import * as t from "io-ts";
 import fetch from "node-fetch";
+import path from "path";
 import express, { Express } from "express";
 import { TypedExpress } from "./TypedExpress";
 import { success } from "./Response";
 import { RouteDefiner } from "../RouteDefiner";
 import { Server } from "http";
 import { AddressInfo } from "net";
+import { getTypes } from "./__fixtures__/get-types";
 
 let server: Server | null = null;
 
@@ -51,6 +53,13 @@ test("Parameters work", async () => {
 
   expect(Game.decode(result.data).isRight()).toBe(true);
   expect(result.data).toEqual({ name1: "gal", name2: "the world" });
+});
+
+test("Types are inferred correctly", async () => {
+  const types = getTypes(
+    path.resolve(__dirname, "./__fixtures__/express-server.ts")
+  );
+  expect(types).toMatchSnapshot();
 });
 
 function getHost(app: Express) {

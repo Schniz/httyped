@@ -5,8 +5,8 @@ import { make as makeRequest } from "./Request";
 import { RouteCallback, ServerRoute } from "./Route";
 
 export class TypedExpress {
-  app: E.Router;
-  routes: ServerRoute<any, any, any, any>[] = [];
+  private readonly app: E.Router;
+  private routes: ServerRoute<any, any, any, any>[] = [];
 
   static of(app: E.Router) {
     return new TypedExpress(app);
@@ -22,13 +22,18 @@ export class TypedExpress {
     RequestType extends t.Any
   >(
     routeDefiner: RouteDefiner<RequestType, RouteResult, Params, Method>,
-    callback: RouteCallback<any, t.TypeOf<RouteResult>, Params>
+    callback: RouteCallback<
+      t.TypeOf<RequestType>,
+      t.TypeOf<RouteResult>,
+      Params
+    >
   ) {
     const route = new ServerRoute({
       callback,
       routeDefiner
     });
     this.routes.push(route);
+
     const routeString = route.routeDefiner.toRoutingString();
     this.app[route.routeDefiner.method as "get" | "post"](
       routeString,
@@ -50,6 +55,7 @@ export class TypedExpress {
       return route.routeDefiner.toJSON();
     });
 
+    console.log("Routes:");
     console.table(tableData);
   }
 }

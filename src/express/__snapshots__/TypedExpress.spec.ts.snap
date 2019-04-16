@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Types are inferred correctly 1`] = `
+Object {
+  "RouteDefiner.get.param(\\"name\\")": "(req: Request<\\"name\\", unknown>) => Promise<Response<string>>",
+  "RouteDefiner.post.reads(t.string).param(\\"name\\")": "(req: Request<\\"name\\", string>) => Promise<Response<string>>",
+  "RouteDefiner.post.reads(t.string).returns(t.type({ name: t.string })).param(\\"name\\")": "(req: Request<\\"name\\", string>) => Promise<Response<{ name: string; }>>",
+}
+`;
