@@ -1,6 +1,6 @@
 # `httype`
 
-Strongly-typed with awesome autocompletion http server and client wrappers.
+> ⛓️ Type-safe HTTP client/server communications with awesome autocompletion
 
 Let your compiler tell you when you break a contract with your client.
 
