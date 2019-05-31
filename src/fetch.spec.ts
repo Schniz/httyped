@@ -17,12 +17,8 @@ afterEach(() => {
 test("Calls the right place", async () => {
   const server = createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        success: true,
-        data: { url: req.url }
-      })
-    );
+    const result: t.TypeOf<typeof Result> = { url: req.url };
+    res.end(JSON.stringify(result));
   });
 
   const host = getHost(server);
@@ -44,10 +40,7 @@ test("Calls the right place", async () => {
     params: { name: "Gal" }
   });
 
-  expect(response.success).toBe(true);
-  if (response.success) {
-    expect(response.data.url).toBe("/hello/Gal");
-  }
+  expect(response.url).toBe("/hello/Gal");
 });
 
 function getHost(app: Server) {

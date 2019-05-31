@@ -50,6 +50,6 @@ export function fetcher<
   rootURL: string = "/"
 ): (
   opts: Opts<M, Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>
-) => Promise<Response<Meta.ResponseType<typeof rd>>> {
+) => Promise<Response<Meta.ResponseType<typeof rd>>["body"]> {
   return opts => fetch(rd, opts, rootURL);
 }

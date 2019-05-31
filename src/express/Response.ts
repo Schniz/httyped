@@ -1,7 +1,13 @@
-export type Response<T> =
-  | { success: true; data: T }
-  | { success: false; error: any };
+export type Response<T> = {
+  status: number;
+  headers?: { [key: string]: string };
+  body: T;
+};
 
 export function success<T>(x: T): Response<T> {
-  return { success: true, data: x };
+  return { status: 200, headers: {}, body: x };
+}
+
+export function response<T>(response: Response<T>): Response<T> {
+  return response;
 }

@@ -41,8 +41,11 @@ export class TypedExpress {
       async (req: E.Request, res: E.Response, next: E.NextFunction) => {
         try {
           const typedRequest = makeRequest(req, route.routeDefiner);
-          const result = await route.callback(typedRequest);
-          res.send(result);
+          const { status, body, headers } = await route.callback(typedRequest);
+          for (const [key, value] of Object.entries(headers || {})) {
+            res.header(key, value);
+          }
+          res.status(status).json(body);
         } catch (e) {
           next(e);
         }
