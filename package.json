@@ -2,11 +2,13 @@
   "name": "httyped",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build && npm run test",
     "test": "jest"
   },
+  "files": ["dist", "!**/__fixtures__", "!**/*.spec.*"],
   "keywords": [],
   "author": "",
   "license": "ISC",
