@@ -4,9 +4,25 @@
 
 Let your compiler tell you when you break a contract with your client.
 
+## Features
+
+✅ Awesome autocompletion and type safety for request parts
+
+![autocompletion and type safety on request parts](./docs/autocomplete_params.png)
+
+✅ Nice and simple route documentation
+
+![documentation using types](./docs/route_listing.png)
+
+✅ Compile time and runtime type validation
+
+![Compile-time and runtime type validations](./docs/runtime_type_validations.png)
+
+# Usage
+
 ## Route
 
-A route is defined by `RouteDefiner`.
+A route is defined by `RouteDefiner`. This part is shared for both server and client.
 
 :white_check_mark: Supports dynamic parameters
 

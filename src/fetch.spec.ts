@@ -1,9 +1,9 @@
 import { fetcher } from "./fetch";
-import { RouteDefiner, Meta } from "./RouteDefiner";
+import { RouteDefiner } from "./RouteDefiner";
 import * as t from "io-ts";
 import { Server, createServer } from "http";
 import { AddressInfo } from "net";
-import { ENGINE_METHOD_ALL } from "constants";
+import { Result } from "./express/Response";
 
 let server: Server | null = null;
 
@@ -17,21 +17,24 @@ afterEach(() => {
 test("Calls the right place", async () => {
   const server = createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
-    const result: t.TypeOf<typeof Result> = { url: req.url };
+    const result: Result<t.TypeOf<typeof ResponseResult>> = {
+      success: true,
+      data: { url: req.url }
+    };
     res.end(JSON.stringify(result));
   });
 
   const host = getHost(server);
 
-  const Result = t.type({ url: t.string });
+  const ResponseResult = t.type({ url: t.string });
   const fetch = fetcher(
     RouteDefiner.get
-      .returns(Result)
+      .returns(ResponseResult)
       .fixed("hello")
       .param("name"),
     host
   );
-  const r2 = RouteDefiner.get.returns(Result).fixed("hello");
+  const r2 = RouteDefiner.get.returns(ResponseResult).fixed("hello");
   const fetch2 = fetcher(r2, host);
 
   await fetch2({ params: {} });
@@ -40,7 +43,11 @@ test("Calls the right place", async () => {
     params: { name: "Gal" }
   });
 
-  expect(response.url).toBe("/hello/Gal");
+  expect(response.success).toBe(true);
+
+  if (response.success) {
+    expect(response.data.url).toBe("/hello/Gal");
+  }
 });
 
 function getHost(app: Server) {

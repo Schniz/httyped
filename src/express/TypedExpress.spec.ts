@@ -30,7 +30,7 @@ test("Simple application works", async () => {
 
   const result = await fetch(`${host}/hello`).then(x => x.json());
 
-  expect(result).toEqual("Hello world!");
+  expect(result.data).toEqual("Hello world!");
 });
 
 test("Parameters work", async () => {
@@ -51,8 +51,8 @@ test("Parameters work", async () => {
 
   const result = await fetch(`${host}/gal/vs/the world`).then(x => x.json());
 
-  expect(Game.decode(result).isRight()).toBe(true);
-  expect(result).toEqual({ name1: "gal", name2: "the world" });
+  expect(Game.decode(result.data).isRight()).toBe(true);
+  expect(result.data).toEqual({ name1: "gal", name2: "the world" });
 });
 
 test("Types are inferred correctly", async () => {
