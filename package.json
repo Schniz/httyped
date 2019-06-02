@@ -8,7 +8,11 @@
     "prepublishOnly": "npm run build && npm run test",
     "test": "jest"
   },
-  "files": ["dist", "!**/__fixtures__", "!**/*.spec.*"],
+  "files": [
+    "dist",
+    "!**/__fixtures__",
+    "!**/*.spec.*"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -17,6 +21,7 @@
     "@types/jest": "^24.0.11",
     "@types/node-fetch": "^2.1.7",
     "express": "^4.16.4",
+    "infer-types": "0.0.1",
     "jest": "^24.5.0",
     "jest-junit": "^6.3.0",
     "node-fetch": "^2.3.0",
@@ -24,6 +29,10 @@
     "ts-jest": "^24.0.1",
     "ts-node": "^8.1.0",
     "typescript": "^3.4.1"
+  },
+  "peerDependencies": {
+    "express": "^4.16.4",
+    "node-fetch": "^2.3.0"
   },
   "dependencies": {
     "io-ts": "^1.8.5"

@@ -7,7 +7,7 @@ import { success } from "./Response";
 import { RouteDefiner } from "../RouteDefiner";
 import { Server } from "http";
 import { AddressInfo } from "net";
-import { getTypes } from "./__fixtures__/get-types";
+import { getTypes } from "infer-types";
 
 let server: Server | null = null;
 
