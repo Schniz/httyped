@@ -113,7 +113,7 @@ const route = RouteDefiner.post
 const fetch = fetcher(route, "http://localhost:3000");
 //                           ^ the base URI
 
-await fetch({
+const { status, data } = await fetch({
   params: {
     greeting: "Hello"
   },

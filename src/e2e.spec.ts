@@ -34,7 +34,8 @@ describe("post data", () => {
     });
     const fetch = fetcher(routes.simple, host);
     const result = await fetch({ params: { name: "gal" } });
-    expect(result).toEqual({ success: true, data: `body: null, param: gal` });
+    expect(result.status).toBe(200);
+    expect(result.data).toBe(`body: null, param: gal`);
   });
 
   test("Parse JSON route", async () => {
@@ -46,10 +47,8 @@ describe("post data", () => {
       params: { name: "gal" },
       body: { name: "gal" }
     });
-    expect(result).toEqual({
-      success: true,
-      data: `from body: gal, param: gal`
-    });
+    expect(result.status).toBe(200);
+    expect(result.data).toEqual(`from body: gal, param: gal`);
   });
 
   test("Parse string route", async () => {
@@ -61,10 +60,8 @@ describe("post data", () => {
       params: { name: "gal" },
       body: "Hello world!"
     });
-    expect(result).toEqual({
-      success: true,
-      data: `body: Hello world!`
-    });
+    expect(result.status).toBe(200);
+    expect(result.data).toEqual(`body: Hello world!`);
   });
 });
 
@@ -76,6 +73,7 @@ afterEach(() => {
     server = null;
   }
 });
+
 function getHost(app: express.Express) {
   server = app.listen(0);
   const port = (server.address() as AddressInfo).port;

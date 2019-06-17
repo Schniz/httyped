@@ -3,7 +3,6 @@ import { RouteDefiner } from "./RouteDefiner";
 import * as t from "io-ts";
 import { Server, createServer } from "http";
 import { AddressInfo } from "net";
-import { Result, ok } from "./Result";
 
 let server: Server | null = null;
 
@@ -17,9 +16,9 @@ afterEach(() => {
 test("Calls the right place", async () => {
   const server = createServer((req, res) => {
     res.writeHead(200, { "Content-Type": "application/json" });
-    const result: Result<t.TypeOf<typeof ResponseResult>> = ok({
+    const result: t.TypeOf<typeof ResponseResult> = {
       url: req.url
-    });
+    };
     res.end(JSON.stringify(result));
   });
 
@@ -42,11 +41,8 @@ test("Calls the right place", async () => {
     params: { name: "Gal" }
   });
 
-  expect(response.success).toBe(true);
-
-  if (response.success) {
-    expect(response.data.url).toBe("/hello/Gal");
-  }
+  expect(response.status).toBe(200);
+  expect(response.data.url).toBe("/hello/Gal");
 });
 
 function getHost(app: Server) {

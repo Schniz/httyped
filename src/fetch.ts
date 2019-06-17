@@ -1,7 +1,13 @@
 import * as t from "io-ts";
 import { RouteDefiner, Meta } from "./RouteDefiner";
-import nodeFetch from "node-fetch";
+import nodeFetch, { Headers } from "node-fetch";
 import { Response } from "./express/Response";
+
+type TypedResponse<T> = {
+  status: number;
+  headers: Headers;
+  data: T;
+};
 
 type Opts<M, Params, Body> = ([keyof Params] extends [never]
   ? { params?: Params }
@@ -23,7 +29,7 @@ export async function fetch<
   rd: RouteDefiner<I, O, P, M>,
   opts: Opts<M, Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>,
   rootURL: string
-): Promise<Meta.ResponseType<typeof rd>> {
+): Promise<TypedResponse<Meta.ResponseType<typeof rd>>> {
   const path = rd.toString(opts.params || ({} as Meta.Params<typeof rd>));
   const response = await nodeFetch(`${rootURL}${path}`, {
     method: rd.method,
@@ -37,7 +43,8 @@ export async function fetch<
     })
   });
 
-  return response.json();
+  const data = await response.json();
+  return { status: response.status, data, headers: response.headers };
 }
 
 export function fetcher<
@@ -45,11 +52,8 @@ export function fetcher<
   O extends t.Any,
   P extends string,
   M extends string
->(
-  rd: RouteDefiner<I, O, P, M>,
-  rootURL: string = "/"
-): (
-  opts: Opts<M, Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>
-) => Promise<Response<Meta.ResponseType<typeof rd>>["body"]> {
-  return opts => fetch(rd, opts, rootURL);
+>(rd: RouteDefiner<I, O, P, M>, rootURL: string = "/") {
+  return (
+    opts: Opts<M, Meta.Params<typeof rd>, Meta.RequestBodyType<typeof rd>>
+  ) => fetch(rd, opts, rootURL);
 }
